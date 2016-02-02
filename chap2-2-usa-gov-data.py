@@ -5,7 +5,7 @@ Created on Wed Feb  3 01:56:40 2016
 @author: yutaka
 """
 
-from pandas import DataFrame as df, Series
+from pandas import DataFrame as df, Series as se
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -22,6 +22,10 @@ clean_tz[clean_tz == ''] = 'Unkown'
 
 tz_counts = clean_tz.value_counts()
 
+user_agents = se([x.split()[0] for x in frame.a.dropna()])
+
+cframe = frame[frame.a.notnull()]
+operating_system = np.where(cframe['a'].str.contains('Windows'), 'Windows', 'Not Windows')
 
 def show_chart(data, num=10):
     y_pos = np.arange(len(data[:num]))
