@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import json
 
-path = '../pydata-book/ch02/usagov_bitly_data2012-03-16-1331923249.txt'
+path = './usagov_bitly_data2012-03-16-1331923249.txt'
 records = [json.loads(line) for line in open(path, encoding='utf-8')]
 frame = df(records)
 
@@ -26,6 +26,14 @@ user_agents = se([x.split()[0] for x in frame.a.dropna()])
 
 cframe = frame[frame.a.notnull()]
 operating_system = np.where(cframe['a'].str.contains('Windows'), 'Windows', 'Not Windows')
+by_tz_os = cframe.groupby(['tz', operating_system])
+agg_counts = by_tz_os.size().unstack().fillna(0)
+indexer = agg_counts.sum(1).argsort()
+count_subset = agg_counts.take(indexer)[-10:]
+
+count_subset.plot(kind='barh', stacked=True)
+normed_subset = count_subset.div(count_subset.sum(1), axis=0)
+normed_subset.plot(kind='barh', stacked=True)
 
 def show_chart(data, num=10):
     y_pos = np.arange(len(data[:num]))
